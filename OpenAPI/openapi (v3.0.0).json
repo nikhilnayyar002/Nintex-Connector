@@ -1,0 +1,173 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "2.0.0",
+    "title": "Nintex-Docusign Connector",
+    "description": "It has two operations and follows OAuth 2.0."
+  },
+  "paths": {
+    "/oauth/userinfo": {
+      "get": {
+        "tags": [
+          "Task"
+        ],
+        "summary": "Get User Info",
+        "description": "Get User Info + associated inf. with different accounts as json response. We will be focusing on Accounts Array in the json response.",
+        "operationId": "GetUserInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/list"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "security": [
+          {
+            "oauth2": []
+          }
+        ]
+      }
+    },
+    "/restapi/v2/accounts/{account_id}/envelopes": {
+      "post": {
+        "summary": "Create envelope",
+        "description": "Creates and send envelope",
+        "operationId": "createEnvelope",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "description": "account id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Post Body (envelope configration)",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/envelope"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{server}/"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://account-d.docusign.com/oauth/auth",
+            "tokenUrl": "https://account-d.docusign.com/oauth/token",
+            "scopes": {
+              "signature": "this is signature part",
+              "extended": "Refresh token you know"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "list": {
+        "type": "object",
+        "properties": {
+          "accounts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "account_id": {
+                  "type": "string"
+                },
+                "base_uri": {
+                  "type": "string"
+                },
+                "is_default": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "envelope": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "emailSubject": {
+            "type": "string"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "documentId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "documentBase64": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "recipients": {
+            "type": "object",
+            "properties": {
+              "signers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "recipientId": {
+                      "type": "string"
+                    },
+                    "routingOrder": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

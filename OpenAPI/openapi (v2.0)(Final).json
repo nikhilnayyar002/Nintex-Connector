@@ -1,0 +1,203 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0.0",
+    "title": "Nintex-Docusign Connector"
+  },
+  "host": "demo.docusign.net",
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "paths": {
+    "/oauth/userinfo": {
+      "get": {
+        "summary": "Get User Info",
+        "description": "Get User Info (we focus on accounts array)",
+        "operationId": "GetUserInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/list"
+            }
+          },
+          "default": {
+            "description": "Operation Failed"
+          }
+        },
+        "security": [
+          {
+            "oauth2": []
+          }
+        ]
+      }
+    },
+    "/restapi/v2/accounts/{account_id}/envelopes": {
+      "post": {
+        "summary": "Create envelope",
+        "description": "Creates and send envelope",
+        "operationId": "createEnvelope",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "description": "account id",
+            "type": "string"
+          },
+          {
+            "name": "envelope",
+            "in": "body",
+            "required": true,
+            "description": "Post Body (envelope configration)",
+            "schema": {
+              "$ref": "#/definitions/envelope"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/good"
+            }
+          },
+          "400": {
+            "description": "ERROR",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "list": {
+      "type": "object",
+      "properties": {
+        "accounts": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "account": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "base_uri": {
+          "type": "string"
+        }
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "emailSubject": {
+          "type": "string"
+        },
+        "documents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/document"
+          }
+        },
+        "recipients": {
+          "type": "object",
+          "properties": {
+            "signers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/signer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "signer": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "recipientId": {
+          "type": "string"
+        },
+        "routingOrder": {
+          "type": "string"
+        }
+      }
+    },
+    "document": {
+      "type": "object",
+      "properties": {
+        "documentId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "documentBase64": {
+          "type": "string"
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "errorCode": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "good": {
+      "type": "object",
+      "properties": {
+        "envelopeId": {
+          "type": "string"
+        },
+        "sub": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "oauth2": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://account-d.docusign.com/oauth/auth",
+      "tokenUrl": "https://account-d.docusign.com/oauth/token",
+      "scopes": {
+        "signature": "this is signature part",
+        "extended": "Refresh token you know"
+      }
+    }
+  }
+}
